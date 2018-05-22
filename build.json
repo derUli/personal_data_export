@@ -1,0 +1,8 @@
+{
+   "id" : "personal_data_export",
+   "version" : "0.1",
+   "description" : "Personal Data Export",
+   "categories" : ["privacy", "dsgvo"],
+   "compatible_from" : "2018.3.2",
+   "dependencies" : ["download_result"]
+}
