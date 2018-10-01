@@ -4,5 +4,6 @@
    "description" : "Personal Data Export",
    "categories" : ["privacy", "dsgvo"],
    "compatible_from" : "2018.3.2",
+   "compatible_to" : "2018.4",
    "dependencies" : ["download_result"]
 }
