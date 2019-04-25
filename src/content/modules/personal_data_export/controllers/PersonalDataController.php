@@ -1,5 +1,6 @@
 <?php
 use GDPR\PersonalData\Query;
+use UliCMS\Exceptions\NotImplementedException;
 
 class PersonalDataController extends MainClass
 {

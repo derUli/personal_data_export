@@ -5,6 +5,7 @@ use Database;
 use StringHelper;
 use GDPR\PersonalData\Response\ResponseBlock;
 use GDPR\PersonalData\Response\BlockData;
+use UliCMS\Exceptions\NotImplementedException;
 
 class CorePersonalDataResponder implements Responder
 {
@@ -70,7 +71,7 @@ class CorePersonalDataResponder implements Responder
 
     public function deleteData($query)
     {
-        throw new \NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public function searchPerson($query)
