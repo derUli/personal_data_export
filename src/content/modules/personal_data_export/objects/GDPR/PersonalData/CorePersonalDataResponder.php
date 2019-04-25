@@ -14,8 +14,6 @@ class CorePersonalDataResponder implements Responder
         "lastname",
         "firstname",
         "email",
-        "skype_id",
-        "twitter",
         "homepage",
         "about_me",
         "notice"
