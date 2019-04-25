@@ -13,7 +13,8 @@ $acl = new ACL();
 			type="search" name="search" value="<?php esc($search);?>">
 	</p>
 	<div>
-		<button type="submit" class="btn btn-primary"><?php translate("search");?></button>
+		<button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> 
+			<?php translate("search");?></button>
 	</div>
 </form>
 <?php if($search){?>
@@ -40,9 +41,9 @@ $acl = new ACL();
 				<td>
 					<div class="button-group">
 			<?php if($acl->hasPermission("personal_data_export")){?>
-			<a
-							href="<?php echo ModuleHelper::buildMethodCallUrl("PersonalDataController", "exportData", "query=".urlencode($person->email));?>"
-							class="btn btn-primary btn-margin"><?php translate("export_data");?></a>
+			<a href="<?php echo ModuleHelper::buildMethodCallUrl("PersonalDataController", "exportData", "query=".urlencode($person->email));?>"
+							class="btn btn-primary btn-margin">
+				<i class="fas fa-download"></i> <?php translate("export_data");?></a>
 			<?php }?>
 			<?php
                 if ($acl->hasPermission("personal_data_delete")) {
@@ -54,7 +55,8 @@ $acl = new ACL();
                         "class" => "delete-form"
                     ));
                     ?>
-        <button type="submit" class="btn btn-danger btn-margin"><?php translate("delete_data");?></button>
+        <button type="submit" class="btn btn-danger btn-margin"><i class="fas fa-trash-alt"></i>
+		 <?php translate("delete_data");?></button>
         <?php
                 }
                 echo ModuleHelper::endForm();
