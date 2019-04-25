@@ -12,7 +12,9 @@ $acl = new ACL();
 		<strong><?php translate("name_or_email_address");?></strong> <br /> <input
 			type="search" name="search" value="<?php esc($search);?>">
 	</p>
-	<button type="submit" class="btn btn-primary"><?php translate("search");?></button>
+	<div>
+		<button type="submit" class="btn btn-primary"><?php translate("search");?></button>
+	</div>
 </form>
 <?php if($search){?>
 <?php
@@ -20,7 +22,7 @@ $acl = new ACL();
     $results = $query->searchPerson($search);
     ?>
    <?php if(count($results) > 0){?>
-<div class="scroll">
+<div class="scroll voffset3">
 	<table class="tablesorter">
 		<thead>
 			<tr>
