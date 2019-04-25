@@ -1,4 +1,5 @@
 <?php
+
 namespace GDPR\PersonalData;
 
 use Database;
@@ -6,9 +7,9 @@ use StringHelper;
 use GDPR\PersonalData\Response\ResponseBlock;
 use GDPR\PersonalData\Response\BlockData;
 use UliCMS\Exceptions\NotImplementedException;
+use User;
 
-class CorePersonalDataResponder implements Responder
-{
+class CorePersonalDataResponder implements Responder {
 
     protected $profileFields = array(
         "username",
@@ -20,13 +21,12 @@ class CorePersonalDataResponder implements Responder
         "notice"
     );
 
-    public function getData($query)
-    {
+    public function getData($query) {
         $person = new \Person();
-        
+
         $userQuery = Database::pQuery("select * from `{prefix}users` where email = ?", array(
-            trim($query)
-        ), true);
+                    trim($query)
+                        ), true);
         if (Database::getNumRows($userQuery)) {
             $row = Database::fetchObject($userQuery);
             $person->email = $row->email;
@@ -50,10 +50,9 @@ class CorePersonalDataResponder implements Responder
             $person->blocks[] = $block;
         }
         $mailQuery = Database::pQuery("select * from {prefix}mails where `to` = ? or headers like ?", array(
-            trim($query),
-            "%" . trim($query) . "%"
-        
-        ), true);
+                    trim($query),
+                    "%" . trim($query) . "%"
+                        ), true);
         if (Database::getNumRows($mailQuery)) {
             while ($mail = Database::fetchObject($mailQuery)) {
                 $block = new ResponseBlock();
@@ -65,38 +64,46 @@ class CorePersonalDataResponder implements Responder
                 $person->blocks[] = $block;
             }
         }
-        
+
         return $person;
     }
 
-    public function deleteData($query)
-    {
-        throw new NotImplementedException();
+    public function deleteData($query) {
+
+        // TODO: block if user is current user;
+        Database::pQuery("delete from {prefix}mails where `to` = ? or headers like ?", array(
+            trim($query),
+            "%" . trim($query) . "%"
+                ), true);
+
+        $user = new User();
+        $user->loadByEmail($query);
+        $user->delete();
+
+        // TODO: Show success message
     }
 
-    public function searchPerson($query)
-    {
+    public function searchPerson($query) {
         $results = array();
         $dbResult = null;
         if (str_contains("@", $query)) {
-            $dbResult = Database::pQuery("select id, username, lastname, firstname, email 
+            $dbResult = Database::pQuery("select id, username, lastname, firstname, email
                             from {prefix}users where email = ? or username = ?", array(
-                $query,
-                $query
-            ), true);
+                        $query,
+                        $query
+                            ), true);
         } else if (str_contains(", ", $query)) {
             $splitted = explode(", ", $query);
             $dbResult = Database::pQuery("select id, username, lastname, firstname, email
                             from {prefix}users where lastname = ? or firstname = ?", array(
-                trim($splitted[0]),
-                trim($splitted[1])
-            ), true);
+                        trim($splitted[0]),
+                        trim($splitted[1])
+                            ), true);
         } else {
-            $dbResult = Database::pQuery("select id, username, lastname, firstname, email
-                            from {prefix}users where lastname = ? or username = ?", array(
-                trim($query),
-                trim($query)
-            ), true);
+            $dbResult = Database::pQuery("select id, username, lastname, firstname, email from {prefix}users where lastname = ? or username = ?", array(
+                        trim($query),
+                        trim($query)
+                            ), true);
         }
         if ($dbResult and Database::getNumRows($dbResult) > 0) {
             $row = Database::fetchObject($dbResult);
@@ -114,8 +121,8 @@ class CorePersonalDataResponder implements Responder
         } else if (str_contains("@", $query)) {
             $dbResult = Database::pQuery("select `to` as email
                             from {prefix}mails where `to` = ?", array(
-                trim($query)
-            ), true);
+                        trim($query)
+                            ), true);
             if (Database::getNumRows($dbResult)) {
                 $row = Database::fetchObject($dbResult);
                 $person = new \Person();
@@ -125,7 +132,8 @@ class CorePersonalDataResponder implements Responder
                 $results[] = $person;
             }
         }
-        
+
         return $results;
     }
+
 }
