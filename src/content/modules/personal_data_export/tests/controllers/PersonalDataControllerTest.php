@@ -1,7 +1,6 @@
 <?php
 
 use Spatie\Snapshots\MatchesSnapshots;
-use function UliCMS\HTML\stringContainsHtml;
 
 class PersonalDataControllerTest extends \PHPUnit\Framework\TestCase
 {
