@@ -54,8 +54,7 @@ $person = ViewBag::get("person");
                                 <td><?php echo HTML\text($value); ?></td>
                             </tr>
                             <?php
-                        }
-                        ?>
+                        } ?>
 
 
                     </tbody>

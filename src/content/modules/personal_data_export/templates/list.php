@@ -4,7 +4,7 @@ use GDPR\PersonalData as PersonalData;
 
 $acl = new ACL();
 
-$currentUser = new User(get_user_id());
+$currentUser = User::fromSessionData();
 ?>
 <?php $search = Request::getVar("search", null, "str"); ?>
 <form
@@ -57,8 +57,7 @@ $currentUser = new User(get_user_id());
                                                 "query" => $person->identifier
                                                     ), "post", array(
                                                 "class" => "delete-form"
-                                            ));
-                                            ?>
+                                            )); ?>
                                             <button type="submit" class="btn btn-danger btn-margin" <?php echo $currentUser->getEmail() == $person->email ? "disabled" : null; ?>><i class="fas fa-trash-alt"></i>
                                                 <?php translate("delete_data"); ?></button>
                                             <?php

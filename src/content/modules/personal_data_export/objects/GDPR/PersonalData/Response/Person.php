@@ -2,7 +2,6 @@
 
 class Person
 {
-
     public $email;
 
     public $name;

@@ -1,49 +1,71 @@
 <?php
 
 use GDPR\PersonalData\Query;
-use UliCMS\Exceptions\NotImplementedException;
 
-class PersonalDataController extends MainClass {
-
+class PersonalDataController extends MainClass
+{
     const MODULE_NAME = "personal_data_export";
 
-    public function settings() {
+    public function settings()
+    {
         return Template::executeModuleTemplate(self::MODULE_NAME, "list.php");
     }
 
-    public function getSettingsLinkText() {
-        return get_translation("open");
-    }
-
-    public function getSettingsHeadline() {
+    public function getSettingsHeadline()
+    {
         return get_translation("personal_data");
     }
 
-    public function deleteData() {
-        $qString = Request::getVar("query", null, "str");
-        $user = new User(get_user_id());
-        if ($user->getEmail() == $qString) {
+    public function exportData()
+    {
+        $term = Request::getVar("query", null, "str");
+        $html = $this->_exportData($term);
+        $escapedTerm = str_replace("@", "_at_", trim($term));
+        $fileName = "data_export-" . date('Y-m-d_h-i') . "-" . $escapedTerm . ".html";
+
+        if (!$html) {
+            ExceptionResult(get_translation("not_found"));
+        }
+
+        DownloadResultFromString($html, $fileName);
+    }
+
+    public function _exportData(?string $term): ?string
+    {
+        if ($term) {
+            $query = new Query();
+            ViewBag::set("person", $query->getData($term));
+
+            return Template::executeModuleTemplate(self::MODULE_NAME, "export.php");
+        }
+        return null;
+    }
+
+    public function deleteData()
+    {
+        $term = Request::getVar("query", null, "str");
+        $this->_deleteData($term);
+
+        if (!$this->_deleteData($term)) {
             ExceptionResult(get_translation("cant_delete_current_user"), HttpStatusCode::UNPROCESSABLE_ENTITY);
         }
 
+        return ActionResult("personal_data_delete_success", $term);
+    }
+
+    public function _deleteData(?string $term): bool
+    {
+        $user = User::fromSessionData();
+        if (!$term) {
+            return false;
+        }
+        
+        if ($user && $user->getEmail() == $term) {
+            return false;
+        }
 
         $query = new Query();
-        $query->deleteData($qString);
-
-        return ActionResult("personal_data_delete_success", $qString);
+        $query->deleteData($term);
+        return true;
     }
-
-    public function exportData() {
-        $qString = Request::getVar("query", null, "str");
-        if ($qString) {
-            $query = new Query();
-            ViewBag::set("person", $query->getData($qString));
-            $escapedQString = str_replace("@", "_at_", trim($qString));
-            $fileName = "data_export-" . date('Y-m-d_h-i') . "-" . $escapedQString . ".html";
-
-            // HTMLResult(Template::executeModuleTemplate(self::MODULE_NAME, "export.php"));
-            DownloadResultFromString(Template::executeModuleTemplate(self::MODULE_NAME, "export.php"), $fileName);
-        }
-    }
-
 }
